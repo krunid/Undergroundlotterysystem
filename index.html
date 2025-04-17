@@ -121,6 +121,38 @@
       text-align: center;
       margin-top: 1rem;
     }
+    .status-bar {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 0.85rem;
+  color: #444;
+  z-index: 15;
+  height: 20px;
+  font-weight: 500;
+}
+
+.status-left {
+  flex: 1;
+  text-align: left;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.status-center {
+  flex: 1;
+  text-align: center;
+}
+
+.status-right {
+  flex: 1;
+  text-align: right;
+}
+
   </style>
 </head>
 <body>
@@ -130,10 +162,13 @@
     <div class="phone-logo">HUAWEI</div>
     <div class="camera-hole"></div>
     <div class="speaker-bar"></div>
+    
     <div class="status-bar">
-      <div id="clock">--:--</div>
-      <div>📶 🔋</div>
+      <div class="status-left">HUAWEI</div>
+      <div class="status-center" id="clock">--:--</div>
+      <div class="status-right">📶 🔋</div>
     </div>
+
     <div class="button-side"></div>
     <div class="button-volume"></div>
 
