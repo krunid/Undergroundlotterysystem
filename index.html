@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>หวยใต้ดิน | Nova 12s</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem;
+      background: radial-gradient(circle at top, #eae0f8, #d3c5f0);
+      font-family: 'Prompt', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .phone-wrapper {
+      position: relative;
+    }
+    .phone-frame {
+      width: 390px;
+      height: 800px;
+      background: linear-gradient(to bottom, #fdfbff, #f7f0ff);
+      border: 16px solid #d6b3f3;
+      border-radius: 40px;
+      box-shadow:
+        inset 0 0 10px rgba(255, 255, 255, 0.4),
+        0 0 40px rgba(190, 150, 255, 0.35),
+        0 10px 25px rgba(0,0,0,0.15);
+      overflow: hidden;
+      position: relative;
+    }
+    .glass-glow {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0)),
+        linear-gradient(45deg, rgba(255,255,255,0.15), rgba(255,255,255,0));
+      pointer-events: none;
+      z-index: 5;
+    }
+    .phone-logo {
+      position: absolute;
+      top: 22px; left: 20px;
+      font-size: 0.85rem; font-weight: bold;
+      color: #999; letter-spacing: 1px; z-index: 10;
+    }
+    .camera-hole {
+      position: absolute;
+      top: 20px; right: 20px;
+      width: 10px; height: 10px;
+      background: #333;
+      border-radius: 50%;
+      box-shadow: 0 0 3px rgba(0,0,0,0.5);
+      z-index: 10;
+    }
+    .speaker-bar {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px; height: 4px;
+      background: #aaa;
+      border-radius: 4px;
+      z-index: 10;
+    }
+    .status-bar {
+      position: absolute;
+      top: 40px; width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 0.75rem;
+      color: #444;
+      z-index: 10;
+    }
+    .button-side, .button-volume {
+      position: absolute;
+      width: 4px;
+      background: #bbb;
+      border-radius: 2px;
+      box-shadow: inset 0 0 2px #888;
+    }
+    .button-side {
+      top: 120px; right: -12px; height: 50px;
+    }
+    .button-volume {
+      top: 190px; right: -12px; height: 35px;
+    }
+    .app-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 1rem;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    label, input, select, button {
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 8px;
+      font-size: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: center;
+    }
+    .total {
+      font-weight: bold;
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div class="phone-wrapper">
+  <div class="phone-frame">
+    <div class="glass-glow"></div>
+    <div class="phone-logo">HUAWEI</div>
+    <div class="camera-hole"></div>
+    <div class="speaker-bar"></div>
+    <div class="status-bar">
+      <div id="clock">--:--</div>
+      <div>📶 🔋</div>
+    </div>
+    <div class="button-side"></div>
+    <div class="button-volume"></div>
+
+    <div class="app-container">
+      <h2 style="text-align:center; margin-top: 2rem;">ระบบหวยใต้ดิน</h2>
+
+      <label>งวดวันที่:</label>
+      <input type="date" id="lotteryDate">
+
+      <label>ประเภท:</label>
+      <select id="type">
+        <option value="3ตัวตรง">3 ตัวตรง</option>
+        <option value="3ตัวโต๊ด">3 ตัวโต๊ด</option>
+        <option value="2ตัวบน">2 ตัวบน</option>
+        <option value="2ตัวล่าง">2 ตัวล่าง</option>
+        <option value="วิ่งบน">วิ่งบน</option>
+        <option value="วิ่งล่าง">วิ่งล่าง</option>
+      </select>
+
+      <label>เลข:</label>
+      <input type="text" id="number" maxlength="3" placeholder="เช่น 123">
+
+      <label>จำนวนเงิน (บาท):</label>
+      <input type="number" id="amount" value="10" min="1">
+
+      <button onclick="addEntry()">เพิ่มรายการ</button>
+
+      <label>รางวัล 3 ตัวบน:</label>
+      <input type="text" id="win3top" maxlength="3">
+
+      <label>รางวัล 2 ตัวล่าง:</label>
+      <input type="text" id="win2bottom" maxlength="2">
+
+      <button onclick="renderTable()">ตรวจรางวัล</button>
+      <button onclick="exportCSV()">📥 Export Excel</button>
+      <button onclick="window.print()">🖨️ Export PDF</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>งวด</th><th>ประเภท</th><th>เลข</th><th>เงิน</th><th>ถูกรางวัล</th><th>ลบ</th>
+          </tr>
+        </thead>
+        <tbody id="entryTable"></tbody>
+      </table>
+
+      <div class="total" id="summary">ยอดรวม: 0 บาท | ถูกรางวัล: 0 บาท</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // เวลาเรียลไทม์
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById("clock").innerText = `${h}:${m}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  let data = JSON.parse(localStorage.getItem("lottoFull") || "[]");
+
+  function addEntry() {
+    const date = document.getElementById("lotteryDate").value;
+    const type = document.getElementById("type").value;
+    const number = document.getElementById("number").value.trim();
+    const amount = parseFloat(document.getElementById("amount").value);
+    if (!date || !number || isNaN(amount) || amount <= 0) {
+      alert("กรอกข้อมูลให้ครบ");
+      return;
+    }
+    data.push({ date, type, number, amount });
+    localStorage.setItem("lottoFull", JSON.stringify(data));
+    renderTable();
+    document.getElementById("number").value = "";
+    document.getElementById("amount").value = 10;
+  }
+
+  function deleteEntry(index) {
+    data.splice(index, 1);
+    localStorage.setItem("lottoFull", JSON.stringify(data));
+    renderTable();
+  }
+
+  function renderTable() {
+    const win3 = document.getElementById("win3top").value;
+    const win2 = document.getElementById("win2bottom").value;
+    let table = '';
+    let total = 0;
+    let winTotal = 0;
+
+    data.forEach((entry, i) => {
+      let win = '';
+      if (entry.type === '3ตัวตรง' && win3 === entry.number) win = 'ถูก (x900)', winTotal += entry.amount * 900;
+      if (entry.type === '3ตัวโต๊ด' && isSameDigits(win3, entry.number)) win = 'ถูก (x150)', winTotal += entry.amount * 150;
+      if (entry.type === '2ตัวบน' && win3.slice(-2) === entry.number) win = 'ถูก (x90)', winTotal += entry.amount * 90;
+      if (entry.type === '2ตัวล่าง' && win2 === entry.number) win = 'ถูก (x90)', winTotal += entry.amount * 90;
+      if (entry.type === 'วิ่งบน' && win3.includes(entry.number)) win = 'ถูก (x3)', winTotal += entry.amount * 3;
+      if (entry.type === 'วิ่งล่าง' && win2.includes(entry.number)) win = 'ถูก (x4)', winTotal += entry.amount * 4;
+
+      table += `
+        <tr>
+          <td>${entry.date}</td>
+          <td>${entry.type}</td>
+          <td>${entry.number}</td>
+          <td>${entry.amount.toFixed(2)}</td>
+          <td>${win || '-'}</td>
+          <td><button onclick="deleteEntry(${i})">ลบ</button></td>
+        </tr>
+      `;
+      total += entry.amount;
+    });
+
+    document.getElementById("entryTable").innerHTML = table;
+    document.getElementById("summary").innerText = `ยอดรวม: ${total.toFixed(2)} บาท | ถูกรางวัล: ${winTotal.toFixed(2)} บาท`;
+  }
+
+  function isSameDigits(a, b) {
+    return a.split('').sort().join('') === b.split('').sort().join('');
+  }
+
+  function exportCSV() {
+    let csv = 'งวด,ประเภท,เลข,จำนวน,ถูกรางวัล\n';
+    const win3 = document.getElementById("win3top").value;
+    const win2 = document.getElementById("win2bottom").value;
+
+    data.forEach(entry => {
+      let result = '';
+      if (entry.type === '3ตัวตรง' && win3 === entry.number) result = 'ถูก';
+      else if (entry.type === '3ตัวโต๊ด' && isSameDigits(win3, entry.number)) result = 'ถูก';
+      else if (entry.type === '2ตัวบน' && win3.slice(-2) === entry.number) result = 'ถูก';
+      else if (entry.type === '2ตัวล่าง' && win2 === entry.number) result = 'ถูก';
+      else if (entry.type === 'วิ่งบน' && win3.includes(entry.number)) result = 'ถูก';
+      else if (entry.type === 'วิ่งล่าง' && win2.includes(entry.number)) result = 'ถูก';
+
+      csv += `${entry.date},${entry.type},${entry.number},${entry.amount},${result}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'หวยใต้ดิน.csv';
+    a.click();
+  }
+
+  renderTable();
+</script>
+</body>
+</html>
